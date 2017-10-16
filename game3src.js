@@ -57,7 +57,7 @@ var brickShots = [];
 var brickFireDelay = Date.now()
 
 var score = 0;
-var lives = 3;
+var lives = 5;
 var fuj = 0;
 var counter = 0;
 var key = 0
@@ -307,9 +307,7 @@ function collisionDetection() {
                 brickShots[i+1].status = 0;
                 score--;
                 drawScore();
-                if(score < 4) {
-                    lives--;
-                }
+                lives--;
                 drawLives();
             }
         }
