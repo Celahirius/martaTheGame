@@ -19,14 +19,13 @@ var added = false;
 
 var ballRadius = 5;
 var ball_img = document.getElementById("ball");
-var ball = [];//= ctx.createPattern(ball_img, 'no-repeat');
+var ball = ctx.createPattern(ball_img, 'no-repeat');
 var x = paddleX;
 var y = paddleY;
 var dx = 2;
 var dy = -6;
 var dy2 = 4;
 
-var tank_img = document.getElementById("tank");
 var rightPressed = false;
 var leftPressed = false;
 var upPressed = false;
@@ -168,6 +167,7 @@ function drawPaddle(){
     ctx.beginPath();
 //    ctx.rect(paddleX,paddleY,paddleWidth,paddleHeight);
 //    ctx.fillstyle="#0095DD";
+    var tank_img = document.getElementById("tank");
     ctx.drawImage(tank_img, paddleX, paddleY);
 //    ctx.fill();
     ctx.closePath();
@@ -188,51 +188,54 @@ function drawBrickShots(){
 }
 
 function drawBricks() {
-    if(brickDirectionID > 19) {
-        brickDirectionID = 0
-    }
-    if(brickDirection == 0) {
-        if(brickY <= 6) {
-            brickDirectionID++;
-            brickDirection = brickDirections[brickDirectionID];
-            brickFired = true
+    if(brickStatus) {
+        if(brickDirectionID > 20) {
+            brickDirectionID = 0
         }
-        brickY -= 2
-    }
-    if(brickDirection == 1) {
-        if(brickX >= canvas.width - brickWidth - 6) {
-            brickDirectionID++;
-            brickDirection = brickDirections[brickDirectionID];
-            brickFired = true
+        if(brickDirection == 0) {
+            if(brickY <= 6) {
+                brickDirectionID++;
+                brickDirection = brickDirections[brickDirectionID];
+                brickFired = true
+            }
+            brickY -= 2
         }
-        brickX += 2
-    }
-    if(brickDirection == 2) {
-        if(brickY >= canvas.height / 2 - 6) {
-            brickDirectionID++;
-            brickDirection = brickDirections[brickDirectionID];
-            brickFired = true
+        if(brickDirection == 1) {
+            if(brickX >= canvas.width - brickWidth - 6) {
+                brickDirectionID++;
+                brickDirection = brickDirections[brickDirectionID];
+                brickFired = true
+            }
+            brickX += 2
         }
-        brickY += 2
-    }
-    if(brickDirection == 3) {
-        if(brickX <= 6) {
-            brickDirectionID++;
-            brickDirection = brickDirections[brickDirectionID];
-            brickFired = true
+        if(brickDirection == 2) {
+            if(brickY >= canvas.height / 2 - 6) {
+                brickDirectionID++;
+                brickDirection = brickDirections[brickDirectionID];
+                brickFired = true
+            }
+            brickY += 2
         }
-        brickX -= 2
-    }
-    
-    ctx.beginPath();
-    ctx.drawImage(brick_img, brickX, brickY);
-    ctx.closePath();
-    
-    if(((brickX + 20 <= paddleX + 4) && (brickX + 20 >= paddleX - 4)) || ((brickX <= canvas.width/2 + 2) && (brickX >= canvas.width/2 - 2)) || ((brickY <= canvas.height/4 + 2) && (brickY >= canvas.height/4 - 2))) {
-        if(Date.now() - brickFireDelay > 700) {
-            brickFired = true
-            brickFireDelay = Date.now()
+        if(brickDirection == 3) {
+            if(brickX <= 6) {
+                brickDirectionID++;
+                brickDirection = brickDirections[brickDirectionID];
+                brickFired = true
+            }
+            brickX -= 2
         }
+        
+        ctx.beginPath();
+        ctx.drawImage(brick_img, brickX, brickY);
+        ctx.closePath();
+        
+        if(((brickX + 20 <= paddleX + 4) && (brickX + 20 >= paddleX - 4)) || ((brickX <= canvas.width/2 + 2) && (brickX >= canvas.width/2 - 2)) || ((brickY <= canvas.height/4 + 2) && (brickY >= canvas.height/4 - 2))) {
+            if(Date.now() - brickFireDelay > 700) {
+                brickFired = true
+                brickFireDelay = Date.now()
+            }
+        }
+        
     }
 }
 
@@ -268,49 +271,44 @@ function finishHimFuj() {
 }
 
 function collisionDetection() {
-    for(i = 0; i < fired; i++) {
-        if(ball[i+1].status == 1) {
+    for(i = 0; (i < fired || i < brickShotsFired); i++) {
+        if(i < fired && ball[i+1].status == 1) {
             if(ball[i+1].y < ballRadius || ball[i+1].y > canvas.height-ballRadius) {
                 ball[i+1].status = 0;
             }
-            if(ball[i+1].x + 10 > brickX && ball[i+1].x < brickX+brickWidth
-               && ball[i+1].y > brickY && ball[i+1].y < brickY+brickHeight) {
-                brickHealth -= 1
-                
-                var barWidth = brickHealth * 5
-                elem.style.width = barWidth + '%';
-                
-                ball[i+1].status = 0;
-                fuj = 1;
-                score++;
-                if(brickHealth == 0) {
-                    brickStatus = false
-                    alert("YOU WIN, CONGRATULATIONS!");
-                    document.location.reload();
+            if(brickStatus) {
+                if(ball[i+1].x > brickX && ball[i+1].x < brickX+brickWidth
+                   && ball[i+1].y > brickY && ball[i+1].y < brickY+brickHeight) {
+                    brickHealth -= 1
+                    
+                    var barWidth = (brickHealth/20)*100
+                    elem.style.width = barWidth + '%';
+                    
+                    ball[i+1].status = 0;
+                    fuj = 1;
+                    drawFuj();
+                    score++;
+                    if(brickHealth == 0) {
+                        brickStatus = false
+                        drawBricks()
+//                        clearInterval(main)
+                        alert("YOU WIN, CONGRATULATIONS!");
+                        document.location.reload();
+                    }
                 }
             }
         }
-    }
-}
-
-function collisionDetection2() {
-    for(i = 0; i < brickShotsFired; i++) {
-        if(brickShots[i+1].status == 1) {
+        if(i < brickFired && brickShots[i+1].status == 1) {
             if(brickShots[i+1].y < ballRadius || brickShots[i+1].y > canvas.height-ballRadius) {
                 brickShots[i+1].status = 0;
             }
-            if((brickShots[i+1].x + 12 > paddleX) && (brickShots[i+1].x - 2 < paddleX + paddleWidth)
-               && (brickShots[i+1].y + 18 > paddleY) && (brickShots[i+1].y + 18 < paddleY + paddleHeight)) {
+            if((brickShots[i+1].x + 10 > paddleX - 5) && (brickShots[i+1].x < paddleX + paddleWidth + 5)
+               && (brickShots[i+1].y + 18 > paddleY) && (brickShots[i+1].y > paddleY + paddleHeight)) {
                 brickShots[i+1].status = 0;
                 score--;
+                drawScore();
                 lives--;
-                //alert(brickShots[i+1].y)
-                //alert(paddleY)
-                if(lives == 0) {
-                    alert("YOU LOST! Xd");
-                    alert("Serio, mało rzeczy mnie triggeruje tak jak to chore „Xd”. Kombinacji x i d można używać na wiele wspaniałych sposobów. Coś cię śmieszy? Stawiasz „xD”. Coś się bardzo śmieszy? Śmiało: „XD”! Coś doprowadza Cię do płaczu ze śmiechu? „XDDD” i załatwione. Uśmiechniesz się pod nosem? „xd”. Po kłopocie. A co ma do tego ten bękart klawiaturowej ewolucji, potwór i zakała ludzkiej estetyki - „Xd”? Co to w ogóle ma wyrażać? Martwego człowieka z wywalonym jęzorem? Powiem Ci, co to znaczy. To znaczy, że masz w telefonie włączone zaczynanie zdań dużą literą, ale szkoda Ci klikać capsa na jedno „d” później. Korona z głowy spadnie? Nie sondze. „Xd” to symptom tego, że masz mnie, jako rozmówcę, gdzieś, bo Ci się nawet kliknąć nie chce, żeby mi wysłać poprawny emotikon. Szanujesz mnie? Używaj „xd”, „xD”, „XD”, do wyboru. Nie szanujesz mnie? Okaż to. Wystarczy, że wstawisz to zjebane „Xd” w choć jednej wiadomości. Nie pozdrawiam");
-                    document.location.reload();
-                }
+                drawLives();
             }
         }
     }
@@ -329,14 +327,13 @@ function drawLives() {
 
 function draw(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
-    drawBrickShots();
+    drawBrickShots()
     drawBricks();
     drawBall();
     drawPaddle();
     drawScore();
     drawLives();
     collisionDetection();
-    collisionDetection2();
     drawFuj();
     
     if(rightPressed && paddleX < canvas.width-paddleWidth) {
@@ -391,7 +388,12 @@ function draw(){
         }
     }
     added = false;
-    //<!--            requestAnimationFrame(draw);-->
+    <!--            requestAnimationFrame(draw);-->
+    if(lives == 0) {
+        alert("YOU LOST! Xd");
+        alert("Serio, mało rzeczy mnie triggeruje tak jak to chore „Xd”. Kombinacji x i d można używać na wiele wspaniałych sposobów. Coś cię śmieszy? Stawiasz „xD”. Coś się bardzo śmieszy? Śmiało: „XD”! Coś doprowadza Cię do płaczu ze śmiechu? „XDDD” i załatwione. Uśmiechniesz się pod nosem? „xd”. Po kłopocie. A co ma do tego ten bękart klawiaturowej ewolucji, potwór i zakała ludzkiej estetyki - „Xd”? Co to w ogóle ma wyrażać? Martwego człowieka z wywalonym jęzorem? Powiem Ci, co to znaczy. To znaczy, że masz w telefonie włączone zaczynanie zdań dużą literą, ale szkoda Ci klikać capsa na jedno „d” później. Korona z głowy spadnie? Nie sondze. „Xd” to symptom tego, że masz mnie, jako rozmówcę, gdzieś, bo Ci się nawet kliknąć nie chce, żeby mi wysłać poprawny emotikon. Szanujesz mnie? Używaj „xd”, „xD”, „XD”, do wyboru. Nie szanujesz mnie? Okaż to. Wystarczy, że wstawisz to zjebane „Xd” w choć jednej wiadomości. Nie pozdrawiam");
+        document.location.reload();
+    }
 
 }
 var main = setInterval(draw,10);
