@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <link rel="stylesheet" href="game3style.css">
+    <head>
+        <meta charset="utf-8" />
+        <title>Marta napisała wiadomość...</title>
+    </head>
+    <body>
+        <img src="ball.png" id="ball" width=10 height=10 visibility:hidden></img>
+        <img src="brick.png" id="brick" width=75 height=25 visibility:hidden></img>
+        <img src="dbrick.png" id="dbrick" width=48 height=35 visibility:hidden></img>
+        <img src="tank.png" id="tank" width=32 height=56 visibility:hidden></img>
+        <img src="dbrick.png" id="brickBall" width=10 height=10 visibility:hidden></img>
+        <div id="myProgress">
+            <div id="myBar"></div>
+        </div>
+        <canvas id="canvas" width="480" height="480"></canvas>
+        <script src="game3src.js"></script>
+        <br>
+        <div class="controls">
+        <button class="button" onmousedown="mouseDown(37)" onmouseup="mouseUp(37)">LEWO</button>
+        <button class="button" onmousedown="mouseDown(39)" onmouseup="mouseUp(39)">PRAWO</button>
+        </div>
+    </body>
