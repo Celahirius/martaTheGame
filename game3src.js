@@ -296,7 +296,7 @@ function collisionDetection() {
 function collisionDetection2() {
     for(i = 0; i < brickShotsFired; i++) {
         if(brickShots[i+1].status == 1) {
-            if(brickShots[i+1].y < ballRadius || brickShots[i+1].y > canvas.height-ballRadius) {
+            if(brickShots[i+1].y < ballRadius || brickShots[i+1].y + 12 > canvas.height) {
                 brickShots[i+1].status = 0;
             }
             if((brickShots[i+1].x + 12 > paddleX) && (brickShots[i+1].x - 2 < paddleX + paddleWidth)
