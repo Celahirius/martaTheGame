@@ -32,6 +32,7 @@ var leftPressed = false;
 var upPressed = false;
 var downPressed = false;
 var spacePressed = false;
+var spaceReleased = true;
 var fired = 0;
 
 var elem = document.getElementById("myBar");
@@ -67,19 +68,19 @@ document.addEventListener("keyup",keyUpHandler,false);
 
 function mouseDown(key){
     if(key==39){
-        rightPressed=true;
+        rightPressed = true;
         
     } else if(key==37){
-        leftPressed=true;
+        leftPressed = true;
         
     }
 }
 function mouseUp(key){
     if(key==39){
-        rightPressed=false;
+        rightPressed = false;
         
     } else if(key==37){
-        leftPressed=false;
+        leftPressed = false;
         
     }
 }
@@ -87,27 +88,28 @@ function mouseUp(key){
 function keyDownHandler(e){
     if(e.keyCode==39){
         
-        rightPressed=true;
+        rightPressed = true;
         
     }
     else if(e.keyCode==37){
         
-        leftPressed=true;
+        leftPressed = true;
         
     }
     if(e.keyCode==38){
         
-        upPressed=true;
+        upPressed = true;
         
     }
     else if(e.keyCode==40){
         
-        downPressed=true;
+        downPressed = true;
         
     }
-    if(e.keyCode==32){
+    if(e.keyCode==32 && spaceReleased){
         
-        spacePressed=true;
+        spacePressed = true;
+        spaceReleased = false;
         
     }
     
@@ -117,26 +119,27 @@ function keyUpHandler(e){
     
     if(e.keyCode==39){
         
-        rightPressed=false;
+        rightPressed = false;
     }
     else if(e.keyCode==37){
         
-        leftPressed=false;
+        leftPressed = false;
         
     }
     if(e.keyCode==38){
         
-        upPressed=false;
+        upPressed = false;
         
     }
     else if(e.keyCode==40){
         
-        downPressed=false;
+        downPressed = false;
         
     }
     if(e.keyCode==32){
         
-        spacePressed=false;
+        spacePressed = false;
+        spaceReleased = true;
         
     }
 }
@@ -352,16 +355,16 @@ function draw(){
         paddleY -= 4;
     }
     if(spacePressed) {
-        spacePressed=false;
+        spacePressed = false;
         for(i = 0; i < fired; i++) {
             if(ball[i+1].status == 0) {
                 added = true;
-                ball[i+1] = { x: paddleX+5, y: paddleY, status: 1};
+                ball[i+1] = { x: paddleX+6, y: paddleY, status: 1};
                 break;
             }
         } if(!added) {
             fired++;
-            ball[fired] = { x: paddleX+5, y: paddleY, status: 1};
+            ball[fired] = { x: paddleX+6, y: paddleY, status: 1};
         }
     }
     for(i = 0; i < fired; i++) {
@@ -377,12 +380,12 @@ function draw(){
         for(i = 0; i < brickShotsFired; i++) {
             if(brickShots[i+1].status == 0) {
                 added = true;
-                brickShots[i+1] = { x: brickX+20, y: brickY, status: 1};
+                brickShots[i+1] = { x: brickX+22, y: brickY, status: 1};
                 break;
             }
         } if(!added) {
             brickShotsFired++;
-            brickShots[brickShotsFired] = { x: brickX+20, y: brickY, status: 1};
+            brickShots[brickShotsFired] = { x: brickX+22, y: brickY, status: 1};
         }
     }
     for(i = 0; i < brickShotsFired; i++) {
