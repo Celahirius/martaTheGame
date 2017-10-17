@@ -285,7 +285,7 @@ function collisionDetection() {
                 score++;
                 if(brickHealth == 0) {
                     brickStatus = false
-                    alert("YOU WIN, CONGRATULATIONS!");
+                    alert("YOU WON, CONGRATULATIONS!");
                     document.location.reload();
                 }
             }
