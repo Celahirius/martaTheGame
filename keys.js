@@ -76,14 +76,6 @@ function mouseDown(key){
     } else if(key==37){
         leftPressed = true;
         
-    } else if(key==40){
-        downPressed = true;
-        
-    } else if(key==38){
-        upPressed = true;
-        
-    } else if(key==41){
-        spacePressed = true;
     }
 }
 function mouseUp(key){
@@ -93,14 +85,6 @@ function mouseUp(key){
     } else if(key==37){
         leftPressed = false;
         
-    } else if(key==40){
-        downPressed = false;
-        
-    } else if(key==38){
-        upPressed = false;
-        
-    } else if(key==41){
-        spacePressed = false;
     }
 }
 
@@ -352,7 +336,7 @@ function drawLives() {
 
 function draw(){
     if(!play) {
-        //music.play();
+        music.play();
         play = true
     }
     ctx.clearRect(0,0,canvas.width,canvas.height);
