@@ -6,6 +6,9 @@ document.getElementById("brickBall").style.display = "none";
 
 + new Date()
 
+var music = document.getElementById("djmushroom")
+var play = false;
+
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d");
 
@@ -147,9 +150,6 @@ function keyUpHandler(e){
 function drawBall(){
     
     for(i = 0; i < fired; i++) {
-//        if(ball[i+1].y > canvas.height){
-//            ball[i+1].status = 0
-//        }
         if(ball[i+1].status == 1) {
             ctx.beginPath();
 //            ctx.save();
@@ -179,12 +179,9 @@ function drawPaddle(){
 
 function drawBrickShots(){
     for(i = 0; i < brickShotsFired; i++) {
-//        if(brickShots[i+1].y > canvas.height){
-//            brickShots[i+1].status = 0
-//        }
         if(brickShots[i+1].status == 1) {
             ctx.beginPath();
-            ctx.drawImage(ball_img, brickShots[i+1].x, brickShots[i+1].y);
+            ctx.drawImage(brickBall_img, brickShots[i+1].x, brickShots[i+1].y);
             ctx.closePath();
         }
     }
@@ -232,7 +229,7 @@ function drawBricks() {
     ctx.closePath();
     
     if(((brickX + 20 <= paddleX + 4) && (brickX + 20 >= paddleX - 4)) || ((brickX <= canvas.width/2 + 2) && (brickX >= canvas.width/2 - 2)) || ((brickY <= canvas.height/4 + 2) && (brickY >= canvas.height/4 - 2))) {
-        if(Date.now() - brickFireDelay > 700) {
+        if(Date.now() - brickFireDelay > 600) {
             brickFired = true
             brickFireDelay = Date.now()
         }
@@ -271,8 +268,8 @@ function finishHimFuj() {
 }
 
 function collisionDetection() {
-    for(i = 0; i < fired; i++) {
-        if(ball[i+1].status == 1) {
+    for(i = 0; i < fired || i < brickShotsFired; i++) {
+        if(i < fired && ball[i+1].status == 1) {
             if(ball[i+1].y < ballRadius || ball[i+1].y > canvas.height-ballRadius) {
                 ball[i+1].status = 0;
             }
@@ -285,35 +282,43 @@ function collisionDetection() {
                 
                 ball[i+1].status = 0;
                 fuj = 1;
-                score++;
+                score += 1;
                 if(brickHealth == 0) {
                     brickStatus = false
                     alert("YOU WON, CONGRATULATIONS!");
                     document.location.reload();
                 }
             }
+            if(i < brickShotsFired && brickShots[i+1].status == 1) {
+                if(brickShots[i+1].y < ballRadius || brickShots[i+1].y + 12 > canvas.height) {
+                    brickShots[i+1].status = 0;
+                }
+                if((brickShots[i+1].x + 12 > paddleX) && (brickShots[i+1].x - 2 < paddleX + paddleWidth)
+                   && (brickShots[i+1].y + 16 > paddleY) && (brickShots[i+1].y + 16 < paddleY + paddleHeight)) {
+                    brickShots[i+1].status = 0;
+                    score--;
+                    lives--;
+                    if(lives == 0) {
+                        alert("YOU LOST! Xd");
+                        alert("Serio, mało rzeczy mnie triggeruje tak jak to chore „Xd”. Kombinacji x i d można używać na wiele wspaniałych sposobów. Coś cię śmieszy? Stawiasz „xD”. Coś się bardzo śmieszy? Śmiało: „XD”! Coś doprowadza Cię do płaczu ze śmiechu? „XDDD” i załatwione. Uśmiechniesz się pod nosem? „xd”. Po kłopocie. A co ma do tego ten bękart klawiaturowej ewolucji, potwór i zakała ludzkiej estetyki - „Xd”? Co to w ogóle ma wyrażać? Martwego człowieka z wywalonym jęzorem? Powiem Ci, co to znaczy. To znaczy, że masz w telefonie włączone zaczynanie zdań dużą literą, ale szkoda Ci klikać capsa na jedno „d” później. Korona z głowy spadnie? Nie sondze. „Xd” to symptom tego, że masz mnie, jako rozmówcę, gdzieś, bo Ci się nawet kliknąć nie chce, żeby mi wysłać poprawny emotikon. Szanujesz mnie? Używaj „xd”, „xD”, „XD”, do wyboru. Nie szanujesz mnie? Okaż to. Wystarczy, że wstawisz „Xd” w choć jednej wiadomości. Nie pozdrawiam");
+                        document.location.reload();
+                    }
+                }
+            }
+
         }
     }
 }
 
 function collisionDetection2() {
-    for(i = 0; i < brickShotsFired; i++) {
-        if(brickShots[i+1].status == 1) {
-            if(brickShots[i+1].y < ballRadius || brickShots[i+1].y + 12 > canvas.height) {
-                brickShots[i+1].status = 0;
-            }
-            if((brickShots[i+1].x + 12 > paddleX) && (brickShots[i+1].x - 2 < paddleX + paddleWidth)
-               && (brickShots[i+1].y + 18 > paddleY) && (brickShots[i+1].y + 18 < paddleY + paddleHeight)) {
-                brickShots[i+1].status = 0;
-                score--;
-                lives--;
-                //alert(brickShots[i+1].y)
-                //alert(paddleY)
-                if(lives == 0) {
-                    alert("YOU LOST! Xd");
-                    alert("Serio, mało rzeczy mnie triggeruje tak jak to chore „Xd”. Kombinacji x i d można używać na wiele wspaniałych sposobów. Coś cię śmieszy? Stawiasz „xD”. Coś się bardzo śmieszy? Śmiało: „XD”! Coś doprowadza Cię do płaczu ze śmiechu? „XDDD” i załatwione. Uśmiechniesz się pod nosem? „xd”. Po kłopocie. A co ma do tego ten bękart klawiaturowej ewolucji, potwór i zakała ludzkiej estetyki - „Xd”? Co to w ogóle ma wyrażać? Martwego człowieka z wywalonym jęzorem? Powiem Ci, co to znaczy. To znaczy, że masz w telefonie włączone zaczynanie zdań dużą literą, ale szkoda Ci klikać capsa na jedno „d” później. Korona z głowy spadnie? Nie sondze. „Xd” to symptom tego, że masz mnie, jako rozmówcę, gdzieś, bo Ci się nawet kliknąć nie chce, żeby mi wysłać poprawny emotikon. Szanujesz mnie? Używaj „xd”, „xD”, „XD”, do wyboru. Nie szanujesz mnie? Okaż to. Wystarczy, że wstawisz to zjebane „Xd” w choć jednej wiadomości. Nie pozdrawiam");
-                    document.location.reload();
-                }
+    for(i = 0; i < fired; i++) {
+        for(j = 0; j < brickShotsFired; j++) {
+            if(ball[i+1].status == 1 && brickShots[j+1].status == 1
+               &&brickShots[j+1].x + 5 > ball[i+1].x && brickShots[j+1].x + 5 < ball[i+1].x + 10
+               && brickShots[j+1].y + 5 > ball[i+1].y && brickShots[j+1].y + 5 < ball[i+1].y + 10) {
+                ball[i+1].status = 0;
+                brickShots[j+1].status = 0;
+                //score++;
             }
         }
     }
@@ -331,6 +336,10 @@ function drawLives() {
 }
 
 function draw(){
+    if(!play) {
+        music.play();
+        play = true
+    }
     ctx.clearRect(0,0,canvas.width,canvas.height);
     drawBrickShots();
     drawBricks();
@@ -398,28 +407,3 @@ function draw(){
 
 }
 var main = setInterval(draw,10);
-
-
-//-$.post( "https://ppuslugi.mf.gov.pl/_/", { Load: '1',
-//-FAST_VERLAST: data.FAST_VERLAST,
-//-FAST_VERLAST_SOURCE:data.FAST_VERLAST_SOURCE,
-//-FAST_CLIENT_WHEN_:timestamp(),
-//-FAST_CLIENT_WINDOW_:'FWDC.WND-c01b-c1f1-3929',
-//-FAST_CLIENT_AJAX_ID_:'0',
-//-_:timestamp()});
-
-
-//  -$.get( "https://ppuslugi.mf.gov.pl/_/");
-//  -var req = new XMLHttpRequest();
-//  -req.open('GET', document.location, false);
-//  -req.send(null);
-//  -var headers = req.getAllResponseHeaders().toLowerCase();
-//  -alert(headers);
-//
-//-$.post( "https://ppuslugi.mf.gov.pl/_/", { Load: '1',
-//-FAST_VERLAST: data.FAST_VERLAST,
-//-FAST_VERLAST_SOURCE:data.FAST_VERLAST_SOURCE,
-//-FAST_CLIENT_WHEN_:timestamp(),
-//-FAST_CLIENT_WINDOW_:'FWDC.WND-c01b-c1f1-3929',
-//-FAST_CLIENT_AJAX_ID_:'0',
-//-_:timestamp()});
