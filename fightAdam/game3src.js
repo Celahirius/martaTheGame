@@ -69,6 +69,16 @@ var key = 0
 document.addEventListener("keydown",keyDownHandler,false);
 document.addEventListener("keyup",keyUpHandler,false);
 
+function audio() {
+    if(!play) {
+        music.play();
+        play = true;
+    } else {
+        music.pause();
+        play = false;
+    }
+}
+
 function mouseDown(key){
     if(key==39){
         rightPressed = true;
@@ -351,10 +361,6 @@ function drawLives() {
 }
 
 function draw(){
-    if(!play) {
-        //music.play();
-        play = true
-    }
     ctx.clearRect(0,0,canvas.width,canvas.height);
     drawBrickShots();
     drawBricks();
